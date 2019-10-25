@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package SpringTrace
+package SpringLogger_test
 
 import (
 	"context"
 	"fmt"
 	"os"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -39,11 +40,23 @@ func (l *ContextLogger) CtxString() string {
 }
 
 func (l *ContextLogger) TagString() string {
-	return strings.Join(l.tags, ",")
+	if len(l.tags) == 0 {
+		return ""
+	}
+	return strings.Join(l.tags, ",") + " "
+}
+
+func (l *ContextLogger) Printf(level string, format string, args ...interface{}) {
+	_, file, line, _ := runtime.Caller(3)
+	if len(file) > 30 {
+		file = "..." + file[len(file)-30:]
+	}
+	str := fmt.Sprintf("%s %s:%d %s %s", level, file, line, l.CtxString(), l.TagString())
+	fmt.Printf(str+format+"\n", args...)
 }
 
 func (l *ContextLogger) Debugf(format string, args ...interface{}) {
-	fmt.Printf("[DEBUG] "+l.CtxString()+" "+l.TagString()+format+"\n", args...)
+	l.Printf("[DEBUG]", format, args...)
 }
 
 func (l *ContextLogger) Debug(args ...interface{}) {
@@ -51,7 +64,7 @@ func (l *ContextLogger) Debug(args ...interface{}) {
 }
 
 func (l *ContextLogger) Infof(format string, args ...interface{}) {
-	fmt.Printf("[INFO] "+l.CtxString()+" "+l.TagString()+format+"\n", args...)
+	l.Printf("[INFO]", format, args...)
 }
 
 func (l *ContextLogger) Info(args ...interface{}) {
@@ -59,7 +72,7 @@ func (l *ContextLogger) Info(args ...interface{}) {
 }
 
 func (l *ContextLogger) Warnf(format string, args ...interface{}) {
-	fmt.Printf("[WARN] "+l.CtxString()+" "+l.TagString()+format+"\n", args...)
+	l.Printf("[WARN]", format, args...)
 }
 
 func (l *ContextLogger) Warn(args ...interface{}) {
@@ -67,7 +80,7 @@ func (l *ContextLogger) Warn(args ...interface{}) {
 }
 
 func (l *ContextLogger) Errorf(format string, args ...interface{}) {
-	fmt.Printf("[ERROR] "+l.CtxString()+" "+l.TagString()+format+"\n", args...)
+	l.Printf("[ERROR]", format, args...)
 }
 
 func (l *ContextLogger) Error(args ...interface{}) {
@@ -75,7 +88,7 @@ func (l *ContextLogger) Error(args ...interface{}) {
 }
 
 func (l *ContextLogger) Fatalf(format string, args ...interface{}) {
-	fmt.Printf("[FATAL] "+l.CtxString()+" "+l.TagString()+format+"\n", args...)
+	l.Printf("[FATAL]", format, args...)
 	os.Exit(0)
 }
 
@@ -84,39 +97,34 @@ func (l *ContextLogger) Fatal(args ...interface{}) {
 	os.Exit(0)
 }
 
-func NewContextLogger(ctx context.Context, tags ...string) SpringLogger.StdLogger {
-	return &ContextLogger{
-		ctx:  ctx,
-		tags: tags,
-	}
-}
-
 func TestDefaultTraceContext(t *testing.T) {
 
 	// 设置全局转换函数
-	Logger = NewContextLogger
-
-	tracer := &DefaultTraceContext{}
-
-	tracer.ContextFunc = func() context.Context {
-		return context.WithValue(nil, "trace_id", "0689")
+	SpringLogger.Logger = func(ctx context.Context, tags ...string) SpringLogger.StdLogger {
+		return &ContextLogger{
+			ctx:  ctx,
+			tags: tags,
+		}
 	}
 
-	fmt.Println()
-
-	tracer.LogDebugf("level:%s", "debug")
-	tracer.LogInfof("level:%s", "info")
-	tracer.LogWarnf("level:%s", "warn")
-	tracer.LogErrorf("level:%s", "error")
-	//tracer.LogFatalf("level:%s", "fatal")
+	ctx := context.WithValue(nil, "trace_id", "0689")
+	tracer := SpringLogger.NewDefaultLoggerContext(ctx)
 
 	fmt.Println()
 
-	tracer.Logger("__in").Debugf("level:%s", "debug")
-	tracer.Logger("__in").Infof("level:%s", "info")
-	tracer.Logger("__in").Warnf("level:%s", "warn")
-	tracer.Logger("__in").Errorf("level:%s", "error")
-	//tracer.Logger("__in").Fatalf("level:%s", "fatal")
+	tracer.LogDebugf("level:%s %d", "debug", 0)
+	tracer.LogInfof("level:%s %d", "info", 1)
+	tracer.LogWarnf("level:%s %d", "warn", 2)
+	tracer.LogErrorf("level:%s %d", "error", 3)
+	//tracer.LogFatalf("level:%s %d", "fatal",4)
+
+	fmt.Println()
+
+	tracer.Logger("__in").Debugf("level:%s %d", "debug", 0)
+	tracer.Logger("__in").Infof("level:%s %d", "info", 1)
+	tracer.Logger("__in").Warnf("level:%s %d", "warn", 2)
+	tracer.Logger("__in").Errorf("level:%s %d", "error", 3)
+	//tracer.Logger("__in").Fatalf("level:%s", "fatal",4)
 
 	fmt.Println()
 }
