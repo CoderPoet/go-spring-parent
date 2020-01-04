@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 )
 
 // defaultLogger 默认的日志输出器
@@ -189,14 +190,14 @@ func (c *Console) Fatalf(format string, args ...interface{}) {
 
 // print
 func (c *Console) print(level Level, args ...interface{}) {
-	str := fmt.Sprintf("[%s]", level)
-	str += fmt.Sprint(args...)
-	fmt.Println(str)
+	str := "[" + strings.ToUpper(level.String()) + "] "
+	str += fmt.Sprintln(args...)
+	fmt.Print(str)
 }
 
 // printf
 func (c *Console) printf(level Level, format string, args ...interface{}) {
-	str := fmt.Sprintf("[%s] ", level)
+	str := "[" + strings.ToUpper(level.String()) + "] "
 	str += fmt.Sprintf(format, args...)
 	fmt.Println(str)
 }
