@@ -16,13 +16,33 @@
 
 package SpringUtils
 
-//
 // 获取 error 的字符串
-//
 func ToString(err error) string {
 	if err != nil {
 		return err.Error()
 	} else {
 		return ""
+	}
+}
+
+// Panic 返回一个封装的 panic 条件
+func Panic(err error) *PanicCond {
+	return NewPanicCond(err)
+}
+
+// PanicCond 封装触发 panic 的条件
+type PanicCond struct {
+	e interface{}
+}
+
+// NewPanicCond PanicCond 的构造函数
+func NewPanicCond(e interface{}) *PanicCond {
+	return &PanicCond{e}
+}
+
+// When 满足给定条件时抛出一个 panic
+func (p *PanicCond) When(isPanic bool) {
+	if isPanic {
+		panic(p.e)
 	}
 }

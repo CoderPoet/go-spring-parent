@@ -16,6 +16,10 @@
 
 package SpringError
 
+import (
+	"github.com/go-spring/go-spring-parent/spring-utils"
+)
+
 var (
 	ERROR   = NewRpcError(-1, "ERROR")
 	SUCCESS = NewRpcSuccess(0, "SUCCESS")
@@ -79,21 +83,8 @@ func (r RpcError) Error(err string) *RpcResult {
 }
 
 //
-// 封装触发 panic 的条件
-//
-type PanicCond struct {
-	Result *RpcResult
-}
-
-func (p *PanicCond) When(isPanic bool) {
-	if isPanic {
-		panic(p.Result)
-	}
-}
-
-//
 // 抛出一个异常值
 //
-func (r RpcError) Panic(err error) *PanicCond {
-	return &PanicCond{r.Error(err.Error())}
+func (r RpcError) Panic(err error) *SpringUtils.PanicCond {
+	return SpringUtils.NewPanicCond(r.Error(err.Error()))
 }
