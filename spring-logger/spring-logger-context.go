@@ -20,14 +20,10 @@ import (
 	"context"
 )
 
-//
-// 获取一个标准的 Logger 接口
-//
+// Logger 获取一个标准的 Logger 接口
 var Logger func(ctx context.Context, tags ...string) StdLogger
 
-//
-// 带有 Logger 功能的 context.Context 接口
-//
+// LoggerContext 带有 Logger 功能的 context.Context 接口
 type LoggerContext interface {
 	// 带有前缀的 Logger 接口
 	PrefixLogger
@@ -39,16 +35,12 @@ type LoggerContext interface {
 	Logger(tags ...string) StdLogger
 }
 
-//
-// 默认的 LoggerContext 版本
-//
+// DefaultLoggerContext 默认的 LoggerContext 版本
 type DefaultLoggerContext struct {
 	context.Context
 }
 
-//
-// 工厂函数
-//
+// NewDefaultLoggerContext DefaultLoggerContext 的构造函数
 func NewDefaultLoggerContext(ctx context.Context) *DefaultLoggerContext {
 	return &DefaultLoggerContext{
 		Context: ctx,
@@ -61,7 +53,7 @@ func (c *DefaultLoggerContext) logger(wrapper bool, tags ...string) StdLogger {
 	if Logger != nil {
 		l = Logger(c.Context, tags...)
 	} else {
-		l = Console
+		l = defaultLogger
 	}
 
 	if wrapper {
@@ -74,42 +66,42 @@ func (c *DefaultLoggerContext) Logger(tags ...string) StdLogger {
 	return c.logger(true, tags...)
 }
 
-func (c *DefaultLoggerContext) LogDebugf(format string, args ...interface{}) {
-	c.logger(false).Debugf(format, args...)
-}
-
 func (c *DefaultLoggerContext) LogDebug(args ...interface{}) {
 	c.logger(false).Debug(args...)
 }
 
-func (c *DefaultLoggerContext) LogInfof(format string, args ...interface{}) {
-	c.logger(false).Infof(format, args...)
+func (c *DefaultLoggerContext) LogDebugf(format string, args ...interface{}) {
+	c.logger(false).Debugf(format, args...)
 }
 
 func (c *DefaultLoggerContext) LogInfo(args ...interface{}) {
 	c.logger(false).Info(args...)
 }
 
-func (c *DefaultLoggerContext) LogWarnf(format string, args ...interface{}) {
-	c.logger(false).Warnf(format, args...)
+func (c *DefaultLoggerContext) LogInfof(format string, args ...interface{}) {
+	c.logger(false).Infof(format, args...)
 }
 
 func (c *DefaultLoggerContext) LogWarn(args ...interface{}) {
 	c.logger(false).Warn(args...)
 }
 
-func (c *DefaultLoggerContext) LogErrorf(format string, args ...interface{}) {
-	c.logger(false).Errorf(format, args...)
+func (c *DefaultLoggerContext) LogWarnf(format string, args ...interface{}) {
+	c.logger(false).Warnf(format, args...)
 }
 
 func (c *DefaultLoggerContext) LogError(args ...interface{}) {
 	c.logger(false).Error(args...)
 }
 
-func (c *DefaultLoggerContext) LogFatalf(format string, args ...interface{}) {
-	c.logger(false).Fatalf(format, args...)
+func (c *DefaultLoggerContext) LogErrorf(format string, args ...interface{}) {
+	c.logger(false).Errorf(format, args...)
 }
 
 func (c *DefaultLoggerContext) LogFatal(args ...interface{}) {
 	c.logger(false).Fatal(args...)
+}
+
+func (c *DefaultLoggerContext) LogFatalf(format string, args ...interface{}) {
+	c.logger(false).Fatalf(format, args...)
 }

@@ -16,14 +16,7 @@
 
 package SpringLogger
 
-import (
-	"fmt"
-	"os"
-)
-
-//
-// 标准的 Logger 接口
-//
+// StdLogger 标准的 Logger 接口
 type StdLogger interface {
 	Debug(args ...interface{})
 	Debugf(format string, args ...interface{})
@@ -41,9 +34,7 @@ type StdLogger interface {
 	Fatalf(format string, args ...interface{})
 }
 
-//
-// 带前缀名的 Logger 接口
-//
+// PrefixLogger 带前缀名的 Logger 接口
 type PrefixLogger interface {
 	LogDebug(args ...interface{})
 	LogDebugf(format string, args ...interface{})
@@ -61,99 +52,47 @@ type PrefixLogger interface {
 	LogFatalf(format string, args ...interface{})
 }
 
-var Console = &console{}
-
-//
-// 控制台打印
-//
-type console struct {
-}
-
-func (c *console) Debugf(format string, args ...interface{}) {
-	fmt.Printf(format+"\n", args...)
-}
-
-func (c *console) Debug(args ...interface{}) {
-	fmt.Println(args...)
-}
-
-func (c *console) Infof(format string, args ...interface{}) {
-	fmt.Printf(format+"\n", args...)
-}
-
-func (c *console) Info(args ...interface{}) {
-	fmt.Println(args...)
-}
-
-func (c *console) Warnf(format string, args ...interface{}) {
-	fmt.Printf(format+"\n", args...)
-}
-
-func (c *console) Warn(args ...interface{}) {
-	fmt.Println(args...)
-}
-
-func (c *console) Errorf(format string, args ...interface{}) {
-	fmt.Printf(format+"\n", args...)
-}
-
-func (c *console) Error(args ...interface{}) {
-	fmt.Println(args...)
-}
-
-func (c *console) Fatalf(format string, args ...interface{}) {
-	fmt.Printf(format+"\n", args...)
-	os.Exit(0)
-}
-
-func (c *console) Fatal(args ...interface{}) {
-	fmt.Println(args...)
-	os.Exit(0)
-}
-
-//
 // 为了平衡调用栈的深度，增加一个 StdLogger 包装类
-//
 type StdLoggerWrapper struct {
 	l StdLogger
-}
-
-func (w *StdLoggerWrapper) Debugf(format string, args ...interface{}) {
-	w.l.Debugf(format, args...)
 }
 
 func (w *StdLoggerWrapper) Debug(args ...interface{}) {
 	w.l.Debug(args...)
 }
 
-func (w *StdLoggerWrapper) Infof(format string, args ...interface{}) {
-	w.l.Infof(format, args...)
+func (w *StdLoggerWrapper) Debugf(format string, args ...interface{}) {
+	w.l.Debugf(format, args...)
 }
 
 func (w *StdLoggerWrapper) Info(args ...interface{}) {
 	w.l.Info(args...)
 }
 
-func (w *StdLoggerWrapper) Warnf(format string, args ...interface{}) {
-	w.l.Warnf(format, args...)
+func (w *StdLoggerWrapper) Infof(format string, args ...interface{}) {
+	w.l.Infof(format, args...)
 }
 
 func (w *StdLoggerWrapper) Warn(args ...interface{}) {
 	w.l.Warn(args...)
 }
 
-func (w *StdLoggerWrapper) Errorf(format string, args ...interface{}) {
-	w.l.Errorf(format, args...)
+func (w *StdLoggerWrapper) Warnf(format string, args ...interface{}) {
+	w.l.Warnf(format, args...)
 }
 
 func (w *StdLoggerWrapper) Error(args ...interface{}) {
 	w.l.Error(args...)
 }
 
-func (w *StdLoggerWrapper) Fatalf(format string, args ...interface{}) {
-	w.l.Fatalf(format, args...)
+func (w *StdLoggerWrapper) Errorf(format string, args ...interface{}) {
+	w.l.Errorf(format, args...)
 }
 
 func (w *StdLoggerWrapper) Fatal(args ...interface{}) {
 	w.l.Fatal(args...)
+}
+
+func (w *StdLoggerWrapper) Fatalf(format string, args ...interface{}) {
+	w.l.Fatalf(format, args...)
 }
