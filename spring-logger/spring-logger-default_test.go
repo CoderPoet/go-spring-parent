@@ -17,6 +17,7 @@
 package SpringLogger_test
 
 import (
+	"errors"
 	"fmt"
 	"testing"
 
@@ -25,7 +26,22 @@ import (
 
 func TestConsole(t *testing.T) {
 	c := &SpringLogger.Console{}
+
 	fmt.Println("a", "=", "1")
 	c.Debug("a", "=", "1")
 	c.Debugf("a=%d", 1)
+
+	t.Run("panic error", func(t *testing.T) {
+		defer func() {
+			recover()
+		}()
+		c.Panic("error")
+	})
+
+	t.Run("panic error new", func(t *testing.T) {
+		defer func() {
+			recover()
+		}()
+		c.Panic(errors.New("error"))
+	})
 }
