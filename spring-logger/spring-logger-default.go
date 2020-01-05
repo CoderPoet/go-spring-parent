@@ -19,7 +19,6 @@ package SpringLogger
 import (
 	"errors"
 	"fmt"
-	"log"
 	"os"
 	"strings"
 )
@@ -72,6 +71,16 @@ func Errorf(format string, args ...interface{}) {
 	defaultLogger.Errorf(format, args...)
 }
 
+// Panic 打印 PANIC 日志
+func Panic(args ...interface{}) {
+	defaultLogger.Panic(args...)
+}
+
+// Panicf 打印 PANIC 日志
+func Panicf(format string, args ...interface{}) {
+	defaultLogger.Panicf(format, args...)
+}
+
 // Fatal 打印 FATAL 日志
 func Fatal(args ...interface{}) {
 	defaultLogger.Fatal(args...)
@@ -79,7 +88,6 @@ func Fatal(args ...interface{}) {
 
 // Fatalf 打印 FATAL 日志
 func Fatalf(format string, args ...interface{}) {
-	log.Fatalln()
 	defaultLogger.Fatalf(format, args...)
 }
 
@@ -91,6 +99,7 @@ const (
 	InfoLevel
 	WarnLevel
 	ErrorLevel
+	PanicLevel
 	FatalLevel
 )
 
@@ -104,6 +113,8 @@ func (l Level) String() string {
 		return "warn"
 	case ErrorLevel:
 		return "error"
+	case PanicLevel:
+		return "panic"
 	case FatalLevel:
 		return "fatal"
 	}
@@ -176,28 +187,42 @@ func (c *Console) Errorf(format string, args ...interface{}) {
 	}
 }
 
+// Panic 打印 PANIC 日志
+func (c *Console) Panic(args ...interface{}) {
+	str := c.print(PanicLevel, args...)
+	panic(errors.New(str))
+}
+
+// Panicf 打印 PANIC 日志
+func (c *Console) Panicf(format string, args ...interface{}) {
+	str := c.printf(PanicLevel, format, args...)
+	panic(errors.New(str))
+}
+
 // Fatal 打印 FATAL 日志
 func (c *Console) Fatal(args ...interface{}) {
 	c.print(FatalLevel, args...)
-	os.Exit(0)
+	os.Exit(1)
 }
 
 // Fatalf 打印 FATAL 日志
 func (c *Console) Fatalf(format string, args ...interface{}) {
 	c.printf(FatalLevel, format, args...)
-	os.Exit(0)
+	os.Exit(1)
 }
 
 // print
-func (c *Console) print(level Level, args ...interface{}) {
+func (c *Console) print(level Level, args ...interface{}) string {
 	str := "[" + strings.ToUpper(level.String()) + "] "
 	str += fmt.Sprintln(args...)
 	fmt.Print(str)
+	return str
 }
 
 // printf
-func (c *Console) printf(level Level, format string, args ...interface{}) {
+func (c *Console) printf(level Level, format string, args ...interface{}) string {
 	str := "[" + strings.ToUpper(level.String()) + "] "
 	str += fmt.Sprintf(format, args...)
 	fmt.Println(str)
+	return str
 }

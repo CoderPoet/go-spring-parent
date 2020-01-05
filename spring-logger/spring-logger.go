@@ -30,6 +30,9 @@ type StdLogger interface {
 	Error(args ...interface{})
 	Errorf(format string, args ...interface{})
 
+	Panic(args ...interface{})
+	Panicf(format string, args ...interface{})
+
 	Fatal(args ...interface{})
 	Fatalf(format string, args ...interface{})
 }
@@ -47,6 +50,9 @@ type PrefixLogger interface {
 
 	LogError(args ...interface{})
 	LogErrorf(format string, args ...interface{})
+
+	LogPanic(args ...interface{})
+	LogPanicf(format string, args ...interface{})
 
 	LogFatal(args ...interface{})
 	LogFatalf(format string, args ...interface{})
@@ -87,6 +93,14 @@ func (w *StdLoggerWrapper) Error(args ...interface{}) {
 
 func (w *StdLoggerWrapper) Errorf(format string, args ...interface{}) {
 	w.l.Errorf(format, args...)
+}
+
+func (w *StdLoggerWrapper) Panic(args ...interface{}) {
+	w.l.Panic(args...)
+}
+
+func (w *StdLoggerWrapper) Panicf(format string, args ...interface{}) {
+	w.l.Panicf(format, args...)
 }
 
 func (w *StdLoggerWrapper) Fatal(args ...interface{}) {

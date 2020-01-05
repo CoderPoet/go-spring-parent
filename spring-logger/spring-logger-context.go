@@ -98,6 +98,14 @@ func (c *DefaultLoggerContext) LogErrorf(format string, args ...interface{}) {
 	c.logger(false).Errorf(format, args...)
 }
 
+func (c *DefaultLoggerContext) LogPanic(args ...interface{}) {
+	c.logger(false).Panic(args...)
+}
+
+func (c *DefaultLoggerContext) LogPanicf(format string, args ...interface{}) {
+	c.logger(false).Panicf(format, args...)
+}
+
 func (c *DefaultLoggerContext) LogFatal(args ...interface{}) {
 	c.logger(false).Fatal(args...)
 }

@@ -18,6 +18,7 @@ package SpringLogger_test
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os"
 	"runtime"
@@ -46,13 +47,15 @@ func (l *ContextLogger) TagString() string {
 	return strings.Join(l.tags, ",") + " "
 }
 
-func (l *ContextLogger) Printf(level string, format string, args ...interface{}) {
+func (l *ContextLogger) Printf(level string, format string, args ...interface{}) string {
 	_, file, line, _ := runtime.Caller(3)
 	if len(file) > 30 {
 		file = "..." + file[len(file)-30:]
 	}
 	str := fmt.Sprintf("%s %s:%d %s %s", level, file, line, l.CtxString(), l.TagString())
-	fmt.Printf(str+format+"\n", args...)
+	str += fmt.Sprintf(format, args...)
+	fmt.Println(str)
+	return str
 }
 
 func (l *ContextLogger) Debugf(format string, args ...interface{}) {
@@ -87,14 +90,24 @@ func (l *ContextLogger) Error(args ...interface{}) {
 	fmt.Println(args...)
 }
 
+func (l *ContextLogger) Panicf(format string, args ...interface{}) {
+	str := l.Printf("[PANIC]", format, args...)
+	panic(errors.New(str))
+}
+
+func (l *ContextLogger) Panic(args ...interface{}) {
+	fmt.Println(args...)
+	panic(errors.New(""))
+}
+
 func (l *ContextLogger) Fatalf(format string, args ...interface{}) {
 	l.Printf("[FATAL]", format, args...)
-	os.Exit(0)
+	os.Exit(1)
 }
 
 func (l *ContextLogger) Fatal(args ...interface{}) {
 	fmt.Println(args...)
-	os.Exit(0)
+	os.Exit(1)
 }
 
 func TestDefaultTraceContext(t *testing.T) {
@@ -116,7 +129,8 @@ func TestDefaultTraceContext(t *testing.T) {
 	tracer.LogInfof("level:%s %d", "info", 1)
 	tracer.LogWarnf("level:%s %d", "warn", 2)
 	tracer.LogErrorf("level:%s %d", "error", 3)
-	//tracer.LogFatalf("level:%s %d", "fatal",4)
+	//tracer.LogPanicf("level:%s %d", "panic", 4)
+	//tracer.LogFatalf("level:%s %d", "fatal", 5)
 
 	fmt.Println()
 
@@ -124,7 +138,8 @@ func TestDefaultTraceContext(t *testing.T) {
 	tracer.Logger("__in").Infof("level:%s %d", "info", 1)
 	tracer.Logger("__in").Warnf("level:%s %d", "warn", 2)
 	tracer.Logger("__in").Errorf("level:%s %d", "error", 3)
-	//tracer.Logger("__in").Fatalf("level:%s", "fatal",4)
+	//tracer.Logger("__in").Panicf("level:%s %d", "panic", 4)
+	//tracer.Logger("__in").Fatalf("level:%s %d", "fatal", 5)
 
 	fmt.Println()
 }
