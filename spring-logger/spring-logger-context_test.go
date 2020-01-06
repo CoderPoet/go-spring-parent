@@ -91,7 +91,8 @@ func (l *ContextLogger) Error(args ...interface{}) {
 }
 
 func (l *ContextLogger) Panicf(format string, args ...interface{}) {
-	str := l.Printf("[PANIC]", format, args...)
+	str := fmt.Sprintf(format, args...)
+	l.Printf("[PANIC]", str)
 	panic(errors.New(str))
 }
 

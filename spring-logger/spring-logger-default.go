@@ -213,16 +213,19 @@ func (c *Console) Fatalf(format string, args ...interface{}) {
 
 // print
 func (c *Console) print(level Level, args ...interface{}) string {
-	str := "[" + strings.ToUpper(level.String()) + "] "
-	str += fmt.Sprintln(args...)
-	fmt.Print(str)
+	str := fmt.Sprint(args...)
+	c.log(level, str)
 	return str
 }
 
 // printf
 func (c *Console) printf(level Level, format string, args ...interface{}) string {
-	str := "[" + strings.ToUpper(level.String()) + "] "
-	str += fmt.Sprintf(format, args...)
-	fmt.Println(str)
+	str := fmt.Sprintf(format, args...)
+	c.log(level, str)
 	return str
+}
+
+// log
+func (c *Console) log(level Level, msg string) {
+	fmt.Println("[" + strings.ToUpper(level.String()) + "] " + msg)
 }

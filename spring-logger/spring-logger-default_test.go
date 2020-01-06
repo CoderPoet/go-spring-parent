@@ -33,14 +33,16 @@ func TestConsole(t *testing.T) {
 
 	t.Run("panic error", func(t *testing.T) {
 		defer func() {
-			recover()
+			err := recover()
+			fmt.Println(err)
 		}()
 		c.Panic("error")
 	})
 
 	t.Run("panic error new", func(t *testing.T) {
 		defer func() {
-			recover()
+			err := recover()
+			fmt.Println(err)
 		}()
 		c.Panic(errors.New("error"))
 	})
