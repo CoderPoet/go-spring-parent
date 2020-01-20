@@ -31,6 +31,9 @@ func TestConsole(t *testing.T) {
 	c.Debug("a", "=", "1")
 	c.Debugf("a=%d", 1)
 
+	c.Error("a", "=", "1")
+	c.Errorf("a=%d", 1)
+
 	t.Run("panic error", func(t *testing.T) {
 		defer func() {
 			err := recover()

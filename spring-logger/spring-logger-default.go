@@ -21,6 +21,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/labstack/gommon/color"
 )
 
 // defaultLogger 默认的日志输出器
@@ -227,5 +229,9 @@ func (c *Console) printf(level Level, format string, args ...interface{}) string
 
 // log
 func (c *Console) log(level Level, msg string) {
-	fmt.Println("[" + strings.ToUpper(level.String()) + "] " + msg)
+	strLevel := strings.ToUpper(level.String())
+	if level > WarnLevel {
+		strLevel = color.Red(strLevel)
+	}
+	fmt.Println("[" + strLevel + "] " + msg)
 }
