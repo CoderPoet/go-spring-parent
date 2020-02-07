@@ -26,7 +26,7 @@ import (
 )
 
 // defaultLogger 默认的日志输出器
-var defaultLogger StdLogger = &Console{}
+var defaultLogger StdLogger = &Console{InfoLevel}
 
 // SetLogger 设置新的日志输出器
 func SetLogger(logger StdLogger) {
