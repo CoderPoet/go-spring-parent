@@ -33,6 +33,16 @@ func SetLogger(logger StdLogger) {
 	defaultLogger = logger
 }
 
+// Trace 打印 TRACE 日志
+func Trace(args ...interface{}) {
+	defaultLogger.Trace(args...)
+}
+
+// Tracef 打印 TRACE 日志
+func Tracef(format string, args ...interface{}) {
+	defaultLogger.Tracef(format, args...)
+}
+
 // Debug 打印 DEBUG 日志
 func Debug(args ...interface{}) {
 	defaultLogger.Debug(args...)
@@ -97,7 +107,8 @@ func Fatalf(format string, args ...interface{}) {
 type Level uint32
 
 const (
-	DebugLevel Level = iota
+	TraceLevel Level = iota
+	DebugLevel
 	InfoLevel
 	WarnLevel
 	ErrorLevel
@@ -107,6 +118,8 @@ const (
 
 func (l Level) String() string {
 	switch l {
+	case TraceLevel:
+		return "trace"
 	case DebugLevel:
 		return "debug"
 	case InfoLevel:
@@ -131,6 +144,20 @@ type Console struct {
 // SetLevel 设置日志的输出级别
 func (c *Console) SetLevel(level Level) {
 	c.level = level
+}
+
+// Trace 打印 TRACE 日志
+func (c *Console) Trace(args ...interface{}) {
+	if c.level <= TraceLevel {
+		c.print(TraceLevel, args...)
+	}
+}
+
+// Tracef 打印 TRACCE 日志
+func (c *Console) Tracef(format string, args ...interface{}) {
+	if c.level <= TraceLevel {
+		c.printf(TraceLevel, format, args...)
+	}
 }
 
 // Debug 打印 DEBUG 日志

@@ -18,6 +18,9 @@ package SpringLogger
 
 // StdLogger 标准的 Logger 接口
 type StdLogger interface {
+	Trace(args ...interface{})
+	Tracef(format string, args ...interface{})
+
 	Debug(args ...interface{})
 	Debugf(format string, args ...interface{})
 
@@ -39,6 +42,9 @@ type StdLogger interface {
 
 // PrefixLogger 带前缀名的 Logger 接口
 type PrefixLogger interface {
+	LogTrace(args ...interface{})
+	LogTracef(format string, args ...interface{})
+
 	LogDebug(args ...interface{})
 	LogDebugf(format string, args ...interface{})
 
@@ -61,6 +67,14 @@ type PrefixLogger interface {
 // 为了平衡调用栈的深度，增加一个 StdLogger 包装类
 type StdLoggerWrapper struct {
 	l StdLogger
+}
+
+func (w *StdLoggerWrapper) Trace(args ...interface{}) {
+	w.l.Trace(args...)
+}
+
+func (w *StdLoggerWrapper) Tracef(format string, args ...interface{}) {
+	w.l.Tracef(format, args...)
 }
 
 func (w *StdLoggerWrapper) Debug(args ...interface{}) {

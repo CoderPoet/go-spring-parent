@@ -58,6 +58,14 @@ func (l *ContextLogger) Printf(level string, format string, args ...interface{})
 	return str
 }
 
+func (l *ContextLogger) Tracef(format string, args ...interface{}) {
+	l.Printf("[TRACE]", format, args...)
+}
+
+func (l *ContextLogger) Trace(args ...interface{}) {
+	fmt.Println(args...)
+}
+
 func (l *ContextLogger) Debugf(format string, args ...interface{}) {
 	l.Printf("[DEBUG]", format, args...)
 }

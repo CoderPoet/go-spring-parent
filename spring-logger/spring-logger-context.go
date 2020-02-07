@@ -66,6 +66,14 @@ func (c *DefaultLoggerContext) Logger(tags ...string) StdLogger {
 	return c.logger(true, tags...)
 }
 
+func (c *DefaultLoggerContext) LogTrace(args ...interface{}) {
+	c.logger(false).Trace(args...)
+}
+
+func (c *DefaultLoggerContext) LogTracef(format string, args ...interface{}) {
+	c.logger(false).Tracef(format, args...)
+}
+
 func (c *DefaultLoggerContext) LogDebug(args ...interface{}) {
 	c.logger(false).Debug(args...)
 }
