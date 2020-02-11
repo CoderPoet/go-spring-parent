@@ -257,8 +257,10 @@ func (c *Console) printf(level Level, format string, args ...interface{}) string
 // log
 func (c *Console) log(level Level, msg string) {
 	strLevel := strings.ToUpper(level.String())
-	if level > WarnLevel {
+	if level >= ErrorLevel {
 		strLevel = color.Red(strLevel)
+	} else if level == WarnLevel {
+		strLevel = color.Yellow(strLevel)
 	}
 	fmt.Println("[" + strLevel + "] " + msg)
 }
