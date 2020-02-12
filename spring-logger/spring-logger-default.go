@@ -20,6 +20,8 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path"
+	"runtime"
 	"strings"
 
 	"github.com/labstack/gommon/color"
@@ -257,10 +259,35 @@ func (c *Console) printf(level Level, format string, args ...interface{}) string
 // log
 func (c *Console) log(level Level, msg string) {
 	strLevel := strings.ToUpper(level.String())
+
 	if level >= ErrorLevel {
 		strLevel = color.Red(strLevel)
 	} else if level == WarnLevel {
 		strLevel = color.Yellow(strLevel)
 	}
-	fmt.Println("[" + strLevel + "] " + msg)
+
+	var (
+		file string
+		line int
+	)
+
+	// 获取注册点信息
+	for i := 2; i < 10; i++ {
+		_, file0, line0, _ := runtime.Caller(i)
+
+		// 排除 spring-core 包下面所有的非 test 文件
+		if strings.Contains(file0, "/spring-logger/") {
+			if !strings.HasSuffix(file0, "_test.go") {
+				continue
+			}
+		}
+
+		file = file0
+		line = line0
+		break
+	}
+
+	dir0, file0 := path.Split(file)
+	file = path.Join(path.Base(dir0), file0)
+	fmt.Printf("[%s] %s:%d %s\n", strLevel, file, line, msg)
 }
