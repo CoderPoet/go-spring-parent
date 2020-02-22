@@ -25,14 +25,13 @@ var (
 	SUCCESS = NewRpcSuccess(0, "SUCCESS")
 )
 
-//
-// 错误码
-//
+// ErrorCode 错误码
 type ErrorCode struct {
 	Code int32  // 错误码
 	Msg  string // 错误信息
 }
 
+// NewErrorCode ErrorCode 的构造函数
 func NewErrorCode(code int32, msg string) ErrorCode {
 	return ErrorCode{
 		Code: code,
@@ -40,9 +39,7 @@ func NewErrorCode(code int32, msg string) ErrorCode {
 	}
 }
 
-//
-// 定义 RPC 返回值
-//
+// RpcResult 定义 RPC 返回值
 type RpcResult struct {
 	ErrorCode
 
@@ -50,15 +47,15 @@ type RpcResult struct {
 	Data interface{} // 返回值
 }
 
-//
-// 定义一个 RPC 成功值
-//
+// RpcSuccess 定义一个 RPC 成功值
 type RpcSuccess ErrorCode
 
+// NewRpcSuccess RpcSuccess 的构造函数
 func NewRpcSuccess(code int32, msg string) RpcSuccess {
 	return RpcSuccess(NewErrorCode(code, msg))
 }
 
+// Data 绑定一个值
 func (r RpcSuccess) Data(data interface{}) *RpcResult {
 	return &RpcResult{
 		ErrorCode: ErrorCode(r),
@@ -66,15 +63,15 @@ func (r RpcSuccess) Data(data interface{}) *RpcResult {
 	}
 }
 
-//
-// 定义一个 RPC 异常值
-//
+// RpcError 定义一个 RPC 异常值
 type RpcError ErrorCode
 
+// NewRpcError RpcError 的构造函数
 func NewRpcError(code int32, msg string) RpcError {
 	return RpcError(NewErrorCode(code, msg))
 }
 
+// Error 绑定一个错误
 func (r RpcError) Error(err string) *RpcResult {
 	return &RpcResult{
 		ErrorCode: ErrorCode(r),
@@ -82,9 +79,7 @@ func (r RpcError) Error(err string) *RpcResult {
 	}
 }
 
-//
-// 抛出一个异常值
-//
+// Panic 抛出一个异常值
 func (r RpcError) Panic(err error) *SpringUtils.PanicCond {
 	return SpringUtils.NewPanicCond(r.Error(err.Error()))
 }

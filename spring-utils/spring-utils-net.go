@@ -18,9 +18,7 @@ package SpringUtils
 
 import "net"
 
-//
-// 获取本机的 IPv4 地址
-//
+// LocalIPv4 获取本机的 IPv4 地址
 func LocalIPv4() string {
 	if ias, err := net.InterfaceAddrs(); err == nil {
 		for _, address := range ias {

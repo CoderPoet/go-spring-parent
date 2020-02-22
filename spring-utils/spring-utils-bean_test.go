@@ -98,17 +98,17 @@ func TestCopyBean(t *testing.T) {
 
 	start := time.Now()
 	for i := 0; i < times; i++ {
-		SpringUtils.CopyBean(&src, &dest)
+		_ = SpringUtils.CopyBean(&src, &dest)
 	}
 
 	fmt.Println(dest)
-	fmt.Println(time.Now().Sub(start).String())
+	fmt.Println(time.Since(start).String())
 
 	start = time.Now()
 	for i := 0; i < times; i++ {
-		SpringUtils.CopyBeanUseJson(&src, &dest)
+		_ = SpringUtils.CopyBeanUseJson(&src, &dest)
 	}
 
 	fmt.Println(dest)
-	fmt.Println(time.Now().Sub(start).String())
+	fmt.Println(time.Since(start).String())
 }

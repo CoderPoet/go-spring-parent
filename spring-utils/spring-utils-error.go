@@ -16,7 +16,7 @@
 
 package SpringUtils
 
-// 获取 error 的字符串
+// ToString 获取 error 的字符串
 func ToString(err error) string {
 	if err != nil {
 		return err.Error()

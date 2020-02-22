@@ -22,9 +22,7 @@ import (
 	"reflect"
 )
 
-//
-// 使用 json 序列化框架进行拷贝，支持匿名字段，支持类型转换。
-//
+// CopyBeanUseJson 使用 json 序列化框架进行拷贝，支持匿名字段，支持类型转换。
 func CopyBeanUseJson(src interface{}, dest interface{}) error {
 	bytes, err := json.Marshal(src)
 	if err != nil {
@@ -33,10 +31,8 @@ func CopyBeanUseJson(src interface{}, dest interface{}) error {
 	return json.Unmarshal(bytes, dest)
 }
 
-//
-// 使用反射直接赋值的方式拷贝，不支持匿名字段，不支持类型转换。
-// TODO 完善该方法，可以参考 json 序列化，需要进行性能测试。
-//
+// CopyBean 使用反射直接赋值的方式拷贝，不支持匿名字段，不支持类型转换。
+// TODO 完善该方法，可以参考 json 序列化，并且需要进行性能测试。
 func CopyBean(src interface{}, dest interface{}) error {
 
 	srcVal := reflect.ValueOf(src)
@@ -57,30 +53,26 @@ func CopyBean(src interface{}, dest interface{}) error {
 }
 
 func copyStruct(srcVal reflect.Value, srcType reflect.Type, destVal reflect.Value, destType reflect.Type) error {
-
 	for i := 0; i < srcType.NumField(); i++ {
-
 		srcField := srcType.Field(i)
 		srcFieldVal := srcVal.Field(i)
-
 		if _, ok := destType.FieldByName(srcField.Name); ok {
-
 			destFieldVal := destVal.FieldByName(srcField.Name)
-			copyField(srcFieldVal, destFieldVal)
+			if err := copyField(srcFieldVal, destFieldVal); err != nil {
+				return err
+			}
 		}
 	}
-
 	return nil
 }
 
-func copyField(srcFieldVal reflect.Value, destFieldVal reflect.Value) {
-
+func copyField(srcFieldVal reflect.Value, destFieldVal reflect.Value) error {
 	if srcFieldVal.Kind() == reflect.Struct && destFieldVal.Kind() == reflect.Struct {
-		copyStruct(srcFieldVal, srcFieldVal.Type(), destFieldVal, destFieldVal.Type())
-
+		return copyStruct(srcFieldVal, srcFieldVal.Type(), destFieldVal, destFieldVal.Type())
 	} else {
 		if srcFieldVal.Type().AssignableTo(destFieldVal.Type()) {
 			destFieldVal.Set(srcFieldVal)
 		}
+		return nil
 	}
 }

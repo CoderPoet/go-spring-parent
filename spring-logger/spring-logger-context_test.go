@@ -129,7 +129,7 @@ func TestDefaultTraceContext(t *testing.T) {
 		}
 	}
 
-	ctx := context.WithValue(nil, "trace_id", "0689")
+	ctx := context.WithValue(context.TODO(), "trace_id", "0689")
 	tracer := SpringLogger.NewDefaultLoggerContext(ctx)
 
 	fmt.Println()

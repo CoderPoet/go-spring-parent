@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-//
-// SpringConst 定义了一些所有包都可能使用到的静态变量。
-//
+// SpringConst 定义了一些所有包都可能使用到的常量。
 package SpringConst
 
-//
-// 如果某个方法未实现需要抛出此错误。
-//
-const UNIMPLEMENTED_METHOD = "unimplemented method"
+import (
+	"fmt"
+)
+
+// UnimplementedMethod 如果某个方法未实现可以抛出此错误。
+var UnimplementedMethod = fmt.Errorf("unimplemented method")

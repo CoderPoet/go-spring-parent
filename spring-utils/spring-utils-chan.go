@@ -16,9 +16,7 @@
 
 package SpringUtils
 
-//
-// 安全地关闭一个管道
-//
+// SafeCloseChan 安全地关闭一个管道
 func SafeCloseChan(ch chan struct{}) {
 	select {
 	case <-ch:

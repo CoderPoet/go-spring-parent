@@ -21,9 +21,7 @@ import (
 	"io/ioutil"
 )
 
-//
-// 加载 XML 配置文件
-//
+// LoadXmlConfig 加载 XML 配置文件
 func LoadXmlConfig(path string, config interface{}) error {
 
 	file, err := ioutil.ReadFile(path)
